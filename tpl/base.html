@@ -43,7 +43,25 @@
 
 </head>
 <body>
+<div id="menu" data-role="page">
+		
+        <!-- reset button 
+        <div class="index-reset" id="index-reset-button">Reset</div><div class="index-reset-tab">-</div>-->
+		
+        <!-- quick escape-->
+		<div data-role="header" data-position="fixed" class="menu-top">
+        	<div class="menu-top-exit">QUICK ESCAPE</div>
+        </div>
+		
+		<div role="content" class="menu-middle menu-background">
+       
+      			<!-- logo -->
+        		<div class="menu-middle-left"></div>
+			{% include "nav.html" %}
+                
+                <!-- main center content -->
 {% block content %}{% endblock %}
+
 <!-- CONTAINER FOR THE ON DEMAND AUDIO -->
 <div id="jquery_jplayer" style="width: 0px; height: 0px; "><audio id="jp_audio_0" preload="metadata" src="#"></audio></div>
 
@@ -51,9 +69,21 @@
 
 <!-- SURVEY DYNAMICALLY ADDED HERE -->
 <script src="lib/jquery/jquery-1.9.1.min.js"></script>
+
 <script src="lib/jquery/jquery-migrate-1.1.1.min.js"></script>
+
 <script src="lib/jquery/jquery-ui.custom.min.js"></script>
+<script type="text/javascript">
+/* disable auto ajax links
+ * must be loaded after jquery but before jquery.mobile
+ * from: http://demos.jquerymobile.com/1.0.1/docs/api/globalconfig.html
+ */
+$(document).bind("mobileinit", function(){
+  $.mobile.ajaxEnabled = false;
+});
+</script>
 <script src="lib/jquerymobile/jquery.mobile-1.3.0.min.js"></script>
+
 <script src="lib/spinner/spin.min.js"></script>
 <script src="lib/fullcalendar/fullcalendar.js"></script>
 <script src="lib/jPlayer/jquery.jplayer.min.js"></script>	
@@ -62,10 +92,15 @@
 <script src="data/data.js"></script>
 
 <script src="js/func.datacontrol.js"></script>
-<script src="js/func.render.js"></script>	
+
+<script src="js/func.render.js"></script>
+
 <script src="js/func.utility.js"></script>
+
 <script src="js/func.questions.js"></script>	
+
 <script src="js/func.behavior.js"></script>
+
 <script src="js/func.calendar-events.js"></script>
 <script src="js/func.events.js"></script>
 <script src="js/func.skip.js"></script>
@@ -105,5 +140,6 @@
 	</div>
 	
 </script>
+
 </body>
 </html>
