@@ -84,9 +84,7 @@ class Stationery extends Cgiapp2 {
 	$this->template_path = $this->param('template_path');
     }
     $this->loader = new Twig_Loader_Filesystem($this->template_path);
-    /* for testing, 
-     * make auto_reload true and cache false
-     */
+    
     $twig_options = array(
 		      "auto_reload" => false
 		      );
@@ -96,7 +94,14 @@ class Stationery extends Cgiapp2 {
     else {
       $twig_options['cache'] = false;
     }
-    
+    /* for testing, 
+     * make auto_reload true and cache false
+     */
+    $testing = true;
+    if($testing) {
+      $twig_options["auto_reload"] = true;
+      $twig_options['cache'] = false;
+    }
     $this->twig = new Twig_Environment($this->loader, $twig_options);
     /* allows twig to parse object values as arrays */
     $this->twig->addFilter(new Twig_SimpleFilter('cast_to_array', function ($stdClassObject) { return (array)$stdClassObject; }));
@@ -189,21 +194,36 @@ class Stationery extends Cgiapp2 {
    */
   /**
    * showStart
-   * Starting page -- shows instructions on how to use the app.
-   * redirect to showProfile if no profile is defined locally
-   * for this username ($_SESSION["username"])
    */
-  /* get info about a user. Used in final and showprofile */
-  /* returns false if no matched profile */
 
   function showStart() {
     /* check database for user name */
     $error = $this->error;
-    $starturl = $this->action . '&mode=eligible';
+    $starturl = $this->action . '?mode=eligible';
     $t = 'start.html';
     $t = $this->twig->loadTemplate($t);
     $output = $t->render(array(
 			       'starturl' => $starturl,
+			       'modes' => $this->user_visible_modes,
+			       'error' => $error
+			       ));
+    return $output;
+  }
+  /**
+   * determineEligibility
+   * correct responses to these questions will allow you to 
+   * enter your details
+   * enterDetails()
+   * failure to qualify will send you to:
+   * goodbye => sayGoodbye()
+   */
+  function determineEligibility() {
+    /* check database for user name */
+    $error = $this->error;
+    $starturl = $this->action . '?mode=eligible';
+    $t = 'eligibility.html';
+    $t = $this->twig->loadTemplate($t);
+    $output = $t->render(array(
 			       'modes' => $this->user_visible_modes,
 			       'error' => $error
 			       ));
