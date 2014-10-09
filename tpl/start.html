@@ -1,0 +1,61 @@
+{% extends "base.html" %}	
+{% block content %}	
+<!-- HOME/MENU PAGE -->
+<!-- ###############################################################-->
+
+<div id="menu" data-role="page">
+		
+        <!-- reset button 
+        <div class="index-reset" id="index-reset-button">Reset</div><div class="index-reset-tab">-</div>-->
+		
+        <!-- quick escape-->
+		<div data-role="header" data-position="fixed" class="menu-top">
+        	<div class="menu-top-exit">QUICK ESCAPE</div>
+        </div>
+		
+		<div role="content" class="menu-middle menu-background">
+       
+      			<!-- logo -->
+        		<div class="menu-middle-left"></div>
+                
+                <!-- site links -->
+       			<div class="menu-middle-right">
+                	<a href="#" class="btn-blue">Resources</a>
+                    <a href="#" class="btn-blue">Safety</a>
+                    <a href="#" class="btn-blue">Contact Us</a>
+                    <a href="#login" class="btn-blue btn-outline-purple">Login</a>
+                </div>
+                
+                <!-- main center content -->
+                <div class="menu-middle-center break">
+                	<h2 class="line-border">Welcome</h2>
+                    
+                    <h1>Women's<br />Wellbeing Project</h1>
+                    
+                    <div class="body-heading margin-top-30">Do you worry about whether your relationship is healthy?</div>
+           		    <div class="body-heading">Do you sometimes wonder if you are safe?</div>
+                    <div class="body-text center-text margin-top-30">If you are an Australian woman aged between 16 and 50 and you have experienced relationship issues over the last 6 months you are invited to take part in this project.</div>
+                    
+                    <a href="{{ starturl }}" class="btn-solid-purple btn-large margin-top-30">BE A PART OF THE PROJECT</a>
+                </div>
+                <div class="menu-footer"></div>
+        </div>
+        
+        <div role="content" class="menu-bottom" id="menu-bottom">
+        
+        	<div class="menu-bottom-container">
+            	<div class="menu-bottom-left"><h3>THE TEAM</h3><p class="body-text">We are a team of researchers in general practice, social work, women's health, nursing, and health technology.  The project is led by The University of Melbourne.</p></div>
+                <div class="menu-bottom-right"><h3>THE PROJECT</h3><p class="body-text">Many women in Australia feel unsafe or fearful or worry that their relationships with their partners are not healthy.  We are testing a website for women to self-reflect on the health of their relationhips, become more informed about what might help them, and plan for their safety and well being.</p></div>
+                
+            </div>
+            <div class="break"></div>
+            <div class="menu-bottom-image">
+            	<div class="center-block-620 quote">
+                		"Learn to let go of what you can't change and take control of what you can." - iMatter
+                </div>
+            </div>
+	    {% include "copyright.html" %}
+             
+        </div>
+</div>
+{% endblock %}

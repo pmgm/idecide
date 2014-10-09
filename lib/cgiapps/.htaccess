@@ -1,0 +1,4 @@
+Options -Indexes +FollowSymLinks +Includes
+php_flag    allow_url_fopen    On
+php_flag    display_errors     On
+

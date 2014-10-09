@@ -1,0 +1,109 @@
+<!DOCTYPE>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+
+<!-- Mirrored from idecide.org.au/ by HTTrack Website Copier/3.x [XR&CO'2010], Mon, 06 Oct 2014 04:30:50 GMT -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta http-equiv="pragma" content="no-cache" />
+<meta http-equiv="Cache-control" content="no-cache">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1,user-scalable=no">
+<title>{% block title %}iDecide{% endblock %}</title>
+
+
+<link rel="stylesheet" href="lib/jquerymobile/jquery.mobile-1.3.0.min.css" />
+<link rel="stylesheet" href="lib/fullcalendar/fullcalendar.css" />
+
+<link rel="stylesheet" href="css/iDecide.css" />
+<link rel="stylesheet" href="css/main.css" />
+
+
+<link href='http://fonts.googleapis.com/css?family=Merriweather' rel='stylesheet' type='text/css'>
+		
+<link href='http://fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css'>
+		
+<link href='http://fonts.googleapis.com/css?family=Open+Sans:400,600,700' rel='stylesheet' type='text/css'>
+  
+
+<!-- Authoriser and maintainer related meta data - developers, don't forget humans.txt   -->
+  <meta name="DC.Creator" content="The University of Melbourne">
+
+  <meta name="UM.Authoriser.Name" content="">
+  <meta name="UM.Authoriser.Title" content="">
+  <meta name="UM.Maintainer.Name" content="">
+  <meta name="UM.Maintainer.Department" content="">
+  <meta name="UM.Maintainer.Email" content="">
+<!-- End authoriser and maintainer meta data -->
+<!-- Static meta data   -->
+  <meta name="DC.Rights" content="http://www.unimelb.edu.au/disclaimer">
+  <meta name="DC.Publisher" content="The University of Melbourne">
+  <meta name="DC.Format" content="text/html">
+  <meta name="DC.Language" content="en">
+  <meta name="DC.Identifier" content="http://www.unimelb.edu.au/">
+<!-- End static meta data -->
+
+</head>
+<body>
+{% block content %}{% endblock %}
+<!-- CONTAINER FOR THE ON DEMAND AUDIO -->
+<div id="jquery_jplayer" style="width: 0px; height: 0px; "><audio id="jp_audio_0" preload="metadata" src="#"></audio></div>
+
+
+
+<!-- SURVEY DYNAMICALLY ADDED HERE -->
+<script src="lib/jquery/jquery-1.9.1.min.js"></script>
+<script src="lib/jquery/jquery-migrate-1.1.1.min.js"></script>
+<script src="lib/jquery/jquery-ui.custom.min.js"></script>
+<script src="lib/jquerymobile/jquery.mobile-1.3.0.min.js"></script>
+<script src="lib/spinner/spin.min.js"></script>
+<script src="lib/fullcalendar/fullcalendar.js"></script>
+<script src="lib/jPlayer/jquery.jplayer.min.js"></script>	
+
+<script src="js/audio.js"></script>
+<script src="data/data.js"></script>
+
+<script src="js/func.datacontrol.js"></script>
+<script src="js/func.render.js"></script>	
+<script src="js/func.utility.js"></script>
+<script src="js/func.questions.js"></script>	
+<script src="js/func.behavior.js"></script>
+<script src="js/func.calendar-events.js"></script>
+<script src="js/func.events.js"></script>
+<script src="js/func.skip.js"></script>
+<!-- MICRO TEMPLATES -->
+<!-- ####################################################### -->
+<!-- MENU ITEMS -->
+
+
+<script type="text/template" id="tmpl_action_plan_resource">
+<div class="strategy-resource">
+	
+	<div class="resource-attributes">
+		<div class="resource-name"><%=resourceName%></div>
+		<div class="resource-note"><%=resourceNote%></div>
+		<% if(resourceURL != ''){ %>
+			<div class="resource-url"><a href="<%=resourceURL%>" rel="external" target="_blank"><%=resourceURL%></a></div>
+		<%}%>
+		
+		<% if(resourcePhone != ''){ %>
+			<div class="resource-phone"><a href="tel:<%=resourcePhone%>"><%=resourcePhone%></a></div>
+		<%}%>
+		<% if(resourcePhone2 != ''){ %>
+			<div class="resource-phone"><a href="tel:<%=resourcePhone2%>"><%=resourcePhone2%></a></div>
+		<%}%>
+	</div>
+		
+	
+	
+	
+</div>	
+</script>					
+<script type="text/template" id="tmpl_priorities_bar">
+
+	<div class="priority-bar <%=type%>_result">
+		<div class="priority-display"><%=display%></div>
+		<div class="priority-weight"><h5 class="<%=type%>_color"><%=weight%>%</h5></div>
+	</div>
+	
+</script>
+</body>
+</html>
