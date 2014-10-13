@@ -4,31 +4,46 @@
 <!-- ###############################################################-->
 <div class="menu-middle-center break">
   <h2>Registration</h2>
-  
-  <h1>Women's<br />Wellbeing Project</h1>
-  
-  <div class="body-heading margin-top-30">Do you worry about whether your relationship is healthy?</div>
-  <div class="body-heading">Do you sometimes wonder if you are safe?</div>
-  <div class="body-text center-text margin-top-30">If you are an Australian woman aged between 16 and 50 and you have experienced relationship issues over the last 6 months you are invited to take part in this project.</div>
-                    
-  <a href="{{ starturl }}" class="btn-solid-purple btn-large margin-top-30">BE A PART OF THE PROJECT</a>
-</div>
-<div class="menu-footer"></div>
 </div>
 
-<div role="content" class="menu-bottom" id="menu-bottom">
-        
-  <div class="menu-bottom-container">
-    <div class="menu-bottom-left"><h3>THE TEAM</h3><p class="body-text">We are a team of researchers in general practice, social work, women's health, nursing, and health technology.  The project is led by The University of Melbourne.</p></div>
-    <div class="menu-bottom-right"><h3>THE PROJECT</h3><p class="body-text">Many women in Australia feel unsafe or fearful or worry that their relationships with their partners are not healthy.  We are testing a website for women to self-reflect on the health of their relationhips, become more informed about what might help them, and plan for their safety and well being.</p></div>
-                
-  </div>
-  <div class="break"></div>
-  <div class="menu-bottom-image">
-    <div class="center-block-620 quote">
-      "Learn to let go of what you can't change and take control of what you can." - iMatter
-    </div>
-  </div>
+
+
+
+<form action="{{ action }}" method="POST">
+<fieldset>
+  <legend>Are you female?</legend>
+  <label for="female-yes">Yes</label>
+  <input type="radio" name="female" id="female-yes" value="yes" />
+  <label for="female-no">No</label>
+  <input type="radio" name="female" id="female-no" value="no" />
+</fieldset>
+<fieldset>
+  <legend>Are you aged 16-50?</legend>
+  <label for="age-yes">Yes</label>
+  <input type="radio" name="age" id="age-yes" value="yes" />
+  <label for="age-no">No</label>
+  <input type="radio" name="age" id="age-no" value="no" />
+</fieldset>
+<fieldset>
+  <legend>Has a <strong>partner</strong> in the last <strong>six months</strong> done <strong>ANY</strong> of the below (tick all that apply):</legend>
+  <input id="unsafe" type="checkbox"  value="yes" name="partner_unsafe" />
+  <label for="unsafe">Made you feel afraid or unsafe?</label>
+  <input id="harrassed" type="checkbox"  value="harassed" name="partner_harrassed" />
+  <label for="harrassed">Followed you or harassed you over the phone or online?</label>
+  <input id="bullied" type="checkbox" value="yes" name="partner_bullied"/>
+  <label for="bullied">Called you names, humiliated, bullied or criticised you, or threatened you in any way?</label>
+  <input id="isolated" type="checkbox"  value="yes" name="partner_isolated"  />
+  <label for="isolated">Isolated you from your family and friends or restricted your behaviour in any way?</label>
+  <input id="harmed" type="checkbox" value="yes" name="partner_harmed"  />
+  <label for="harmed">Physically harmed you in any way?</label>
+  <input id="sexual" type="checkbox"  value="yes" name="partner_sexual"  />
+  <label for="sexual">Forced you to do sexual things you didn’t want to?</label>
+</fieldset>
+<button type="submit" class="ui-btn ui-btn-up-c" name="eligible_submitted" value="submitted">Next</button>
+</form>
+
+</div>
+<div class="menu-bottom" id="menu-bottom">
   {% include "copyright.html" %}
   
 </div>
