@@ -28,6 +28,6 @@ $params = array(
 	'template_path' => $template_path,
 	'template_params' => $template_params
 	 );
-$webapp = new Stationery(array('PARAMS' => $params));
+$webapp = new Idecide(array('PARAMS' => $params));
 $webapp->run(); 
 ?>
