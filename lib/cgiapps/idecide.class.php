@@ -121,9 +121,9 @@ class Stationery extends Cgiapp2 {
      */
     $this->run_modes(array(
 			   'start' => 'showStart',
-			   'eligible' => 'determineEligibility' /*,
-			  'thanks' => 'showIneligible',
-			     'introduction' => 'showIntro'*/
+			   'eligible' => 'determineEligibility' ,
+			   'thanks' => 'showIneligible',
+			   'introduction' => 'showIntro'
 			   ));
     // should be an entry for each of the run modes above
     $this->run_modes_default_text = array(
@@ -219,9 +219,11 @@ class Stationery extends Cgiapp2 {
       }
       if ($this->eligible) {
 	/* eligible go to plain language statement */
+	return $this->showIntro();
       }
       else {
 	/* otherwise, thanks for coming */
+	return $this->showIneligible();
       }
     }
     
@@ -240,7 +242,7 @@ class Stationery extends Cgiapp2 {
    */
   function showIneligible() {
     $error = $this->error;
-    $t = 'start.html';
+    $t = 'ineligible.html';
     $t = $this->twig->loadTemplate($t);
     $output = $t->render(array(
 			       'error' => $error
@@ -257,7 +259,7 @@ class Stationery extends Cgiapp2 {
       return $this->showStart();
     }
     $error = $this->error;
-    $t = 'start.html';
+    $t = 'introduction.html';
     $t = $this->twig->loadTemplate($t);
     $output = $t->render(array(
 			       'error' => $error
