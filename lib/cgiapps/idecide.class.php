@@ -58,6 +58,11 @@ class Stationery extends Cgiapp2 {
    private $insert;
    private $update;
    private $delete;
+   /** 
+    * @var eligible
+    * eligible women can go deeper into registration
+    */
+   private $eligible;
 
    function setup() {
     /** 
@@ -116,7 +121,9 @@ class Stationery extends Cgiapp2 {
      */
     $this->run_modes(array(
 			   'start' => 'showStart',
-			   'eligible' => 'determineEligibility'
+			   'eligible' => 'determineEligibility' /*,
+			  'thanks' => 'showIneligible',
+			     'introduction' => 'showIntro'*/
 			   ));
     // should be an entry for each of the run modes above
     $this->run_modes_default_text = array(
@@ -129,6 +136,7 @@ class Stationery extends Cgiapp2 {
     $this->mode_param('mode');
     $this->action = $_SERVER['SCRIPT_NAME'];
     $this->sqlstatements();
+    $this->eligible = false;
   }
  
   /**
@@ -138,35 +146,10 @@ class Stationery extends Cgiapp2 {
    * to prevent duplication
    */
   private function sqlstatements() {
-    $this->select = array(
-			  'SELECT * FROM user WHERE username = :id',
-			  'SELECT name, acronym, department_id FROM department ORDER by acronym',
-			  'SELECT department_id from user_department where username = :id',
-			  "SELECT * FROM template WHERE category_id = :category_id AND department_id in ( jjjdepartments ) OR category_id = :category_id2 AND department_id IS NULL ORDER BY full_name ASC",
-			  'SELECT * FROM job WHERE username = :username ORDER BY job_id DESC LIMIT 1',
-			  'SELECT j.job_id, j.username, c.description FROM job j, category c, template t WHERE t.template_id = j.template_id AND t.category_id = c.category_id and j.job_id = :job_id',
-			  'SELECT id FROM template WHERE template_id = :template_id AND chili_id = :chili_id',
-			  'SELECT t.full_name FROM template t, job j WHERE j.job_id= :job_id and j.template_id = t.template_id',
-			  'SELECT quantity, sell_price as price_AUD FROM customer_price_view WHERE category_id = :category_id',
-			  'SELECT * FROM address where address_id = :address_id',
-			  "SELECT * FROM template WHERE category_id = :category_id AND department_id IS NULL ORDER BY full_name ASC",
-			  'SELECT * from user_group where group_id = 1 and username = :username'
-			  );
-    $this->insert = array(
-			  'INSERT INTO user VALUES(:username, :firstname, :lastname, :telephone, :email, DEFAULT);',
-			  'INSERT INTO user_department VALUES(:username, :department_id)',
-			  'INSERT INTO job (job_id, username, template_id) VALUES(DEFAULT, :username, :template_id)',
-			  'INSERT INTO address(address_id, addressee, location, street_number, street, town, postcode) VALUES (DEFAULT, :addressee, :location, :street_number, :street, :town, :postcode)',
-			  'INSERT INTO :entity (xxx) VALUES (yyy)'
-			  );
-    $this->update = array(
-			  'UPDATE user SET given_name = :firstname, family_name = :lastname, phone = :phone, email = :email WHERE username = :id',
-			  'UPDATE job SET chili_id = :chili_id WHERE username = :username AND job_id = :job_id',
-			  'UPDATE :entity SET xxx WHERE entity_id = :id'
-			  );
-    $this->delete = array(
-			  'DELETE FROM user_department WHERE username = :username AND department_id = :department_id'
-			  );
+    $this->select = array( );
+    $this->insert = array( 'INSERT INTO :entity (xxx) VALUES (yyy)' );
+    $this->update = array( );
+    $this->delete = array( );
   }
   /**
    * function to shut everything down after the app has run
@@ -192,10 +175,10 @@ class Stationery extends Cgiapp2 {
   /**
    * mode functions here
    */
+
   /**
    * showStart
    */
-
   function showStart() {
     /* check database for user name */
     $error = $this->error;
@@ -204,7 +187,6 @@ class Stationery extends Cgiapp2 {
     $t = $this->twig->loadTemplate($t);
     $output = $t->render(array(
 			       'starturl' => $starturl,
-			       'modes' => $this->user_visible_modes,
 			       'error' => $error
 			       ));
     return $output;
@@ -218,13 +200,66 @@ class Stationery extends Cgiapp2 {
    * goodbye => sayGoodbye()
    */
   function determineEligibility() {
-    /* check database for user name */
+    if (isset($_REQUEST['eligible_submitted'])) {
+      /* eligible if:
+       * a woman
+       * aged 16-50
+       * has ticked one of the 'partner' checkboxes
+       */
+      if(isset($_REQUEST['female']) and isset($_REQUEST['age'])) {
+	if ($_REQUEST['female'] == "yes" and $_REQUEST['age'] == "yes") {
+	  $eligibility = false;
+	  foreach ($_REQUEST as $req=>$value) {
+	    if(strpos( $req , 'partner_' ) !== false) {
+	      $eligibility = true;
+	    }
+	  }
+	  $this->eligible = $eligibility;
+	}
+      }
+      if ($this->eligible) {
+	/* eligible go to plain language statement */
+      }
+      else {
+	/* otherwise, thanks for coming */
+      }
+    }
+    
     $error = $this->error;
     $starturl = $this->action . '?mode=eligible';
     $t = 'eligibility.html';
     $t = $this->twig->loadTemplate($t);
     $output = $t->render(array(
-			       'modes' => $this->user_visible_modes,
+			       'error' => $error
+			       ));
+    return $output;
+  }
+  /**
+   * showIneligible
+   * screen to show if the user is ineligible to continue
+   */
+  function showIneligible() {
+    $error = $this->error;
+    $t = 'start.html';
+    $t = $this->twig->loadTemplate($t);
+    $output = $t->render(array(
+			       'error' => $error
+			       ));
+    return $output;
+  }
+  /**
+   * showIntro
+   * display plain language statement about the project
+   * NB - this mode is only visible if eligible.
+   */
+  function showIntro() {
+    if (! $this->eligible) {
+      return $this->showStart();
+    }
+    $error = $this->error;
+    $t = 'start.html';
+    $t = $this->twig->loadTemplate($t);
+    $output = $t->render(array(
 			       'error' => $error
 			       ));
     return $output;
@@ -237,7 +272,7 @@ class Stationery extends Cgiapp2 {
  */
 private function addThing($thing, $thing_details) {
   $thing_id = -1;
-  $statement = $this->insert[4];
+  $statement = $this->insert[0];
   $column_names = array_keys($thing_details);
   $statement = str_replace('xxx', implode(', ', $column_names), $statement);
   $statement = str_replace('yyy', ':yyy', $statement);
