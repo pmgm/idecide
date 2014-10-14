@@ -60,6 +60,7 @@
 			{% include "nav.html" %}
                 
                 <!-- main center content -->
+{% block error %}{{(error|default(''))|raw}}{% endblock %}
 {% block content %}{% endblock %}
 
 <!-- CONTAINER FOR THE ON DEMAND AUDIO -->
