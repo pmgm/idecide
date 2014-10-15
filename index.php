@@ -11,17 +11,15 @@ require_once($_SERVER["DOCUMENT_ROOT"] . LIBPATH . "/lib/cgiapps/idecide.class.p
 
 $template_path = $_SERVER["DOCUMENT_ROOT"] . LIBPATH . '/tpl/';
 // template_params must at minimum include 'filename' keyword
-$title = "iDecide";
+session_start();
+$title = "I-DECIDE";
 //$title_attributes = "";
 $template_params = array(
 		'filename' => 'base.html',
 	  	'title' => $title,
-	  	'extra_style' => array(
-			/*array('url' => '/css/qset.css', 'media' => 'screen')*/
-			),
+	  	'extra_style' => array( ),
 	  	'extra_script' => array(
-			array(
-				)
+			array( )
 			)
 	);
 $params = array(

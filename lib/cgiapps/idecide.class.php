@@ -123,7 +123,8 @@ class Idecide extends Cgiapp2 {
 			   'start' => 'showStart',
 			   'eligible' => 'determineEligibility' ,
 			   'thanks' => 'showIneligible',
-			   'introduction' => 'showIntro'
+			   'introduction' => 'showIntro',
+			   'details' => 'collectDetails'
 			   ));
     // should be an entry for each of the run modes above
     $this->run_modes_default_text = array(
@@ -180,7 +181,6 @@ class Idecide extends Cgiapp2 {
    * showStart
    */
   function showStart() {
-    /* check database for user name */
     $error = $this->error;
     $starturl = $this->action . '?mode=eligible';
     $t = 'start.html';
@@ -200,24 +200,28 @@ class Idecide extends Cgiapp2 {
    * goodbye => sayGoodbye()
    */
   function determineEligibility() {
+    print_r($_REQUEST);
     if (isset($_REQUEST['eligible_submitted'])) {
       /* eligible if:
        * a woman
        * aged 16-50
        * has ticked one of the 'partner' checkboxes
        */
+      $eligibility = false;
       if(isset($_REQUEST['female']) and isset($_REQUEST['age'])) {
 	if ($_REQUEST['female'] == "yes" and $_REQUEST['age'] == "yes") {
-	  $eligibility = false;
+
 	  foreach ($_REQUEST as $req=>$value) {
 	    if(strpos( $req , 'partner_' ) !== false) {
 	      $eligibility = true;
+	      $this->error = "Hi there";
 	    }
 	  }
 	  $this->eligible = $eligibility;
+	  $_SESSION["eligible"] = $this->eligible;
 	}
       }
-      if ($this->eligible) {
+      if ($this->eligible === true) {
 	/* eligible go to plain language statement */
 	return $this->showIntro();
       }
@@ -255,11 +259,31 @@ class Idecide extends Cgiapp2 {
    * NB - this mode is only visible if eligible.
    */
   function showIntro() {
-    if (! $this->eligible) {
+    if (! $_SESSION["eligible"]) {
+      return $this->showStart();
+    }
+    $nexturl = $this->action . '?mode=details';
+    $error = $this->error;
+    $t = 'introduction.html';
+    $t = $this->twig->loadTemplate($t);
+    $output = $t->render(array(
+			       'error' => $error,
+			       'next' => $nexturl
+			       ));
+    return $output;
+  }
+
+  /**
+   * collectDetails
+   * gather participant details for entry to the database
+   * NB - this mode is only visible if eligible.
+   */
+  function collectDetails() {
+    if (! $_SESSION["eligible"]) {
       return $this->showStart();
     }
     $error = $this->error;
-    $t = 'introduction.html';
+    $t = 'details.html';
     $t = $this->twig->loadTemplate($t);
     $output = $t->render(array(
 			       'error' => $error
