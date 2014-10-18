@@ -23,6 +23,28 @@
   <legend>Contact Details</legend>
   <label for="street_address1">Street Address 1</label>
   <input id="street_address1" name="street_address1" placeholder="eg. 123 Main St" />
+  <label for="street_address2">Street Address 2</label>
+  <input id="street_address2" name="street_address1" />
+  <label for="city">Suburb / City</label>
+  <input id="city" name="city" placeholder="eg. Melbourne CBD" />
+  <label for="state">State</label>
+  <select name="state">
+<optgroup label="States">
+    <option value="New South Wales">New South Wales</option>
+    <option value="Queensland">Queensland</option>
+    <option value="South Australia">South Australia</option>
+    <option value="Tasmania">Tasmania</option>
+    <option value="Victoria">Victoria</option>
+    <option value="Western Australia">Western Australia</option>
+</optgroup>
+<optgroup label="Territories">
+  <option value="Australian Capital Territory">Australian Capital Territory</option>
+    <option value="Northern Territory">Northern Territory</option>
+    <option value="Other">Other Territory</option>
+</optgroup>
+  </select>
+ <label for="postcode">Postcode</label>
+  <input id="postcode" name="postcode" />
 </fieldset>
 <button type="submit" class="ui-btn ui-btn-up-c" name="eligible_submitted" value="submitted">Next</button>
 </form>
