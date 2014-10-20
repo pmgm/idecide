@@ -124,7 +124,9 @@ class Idecide extends Cgiapp2 {
 			   'eligible' => 'determineEligibility' ,
 			   'thanks' => 'showIneligible',
 			   'introduction' => 'showIntro',
-			   'details' => 'collectDetails'
+			   'details' => 'collectDetails',
+			   'consent' => 'collectConsent',
+			   'final' => 'showFinal'
 			   ));
     // should be an entry for each of the run modes above
     $this->run_modes_default_text = array(
@@ -214,7 +216,6 @@ class Idecide extends Cgiapp2 {
 	  foreach ($_REQUEST as $req=>$value) {
 	    if(strpos( $req , 'partner_' ) !== false) {
 	      $eligibility = true;
-	      $this->error = "Hi there";
 	    }
 	  }
 	  $this->eligible = $eligibility;
@@ -223,6 +224,7 @@ class Idecide extends Cgiapp2 {
       }
       if ($this->eligible === true) {
 	/* eligible go to plain language statement */
+	$_REQUEST['mode'] = "introduction";
 	return $this->showIntro();
       }
       else {
@@ -232,7 +234,6 @@ class Idecide extends Cgiapp2 {
     }
     
     $error = $this->error;
-    $starturl = $this->action . '?mode=eligible';
     $t = 'eligibility.html';
     $t = $this->twig->loadTemplate($t);
     $output = $t->render(array(
@@ -283,7 +284,6 @@ class Idecide extends Cgiapp2 {
       return $this->showStart();
     }
     if (isset($_REQUEST['details_submitted'])) {
-      print_r($_REQUEST);
  
       /* these attributes are a subset of the db 
        * entity 'participant' field names */
@@ -319,16 +319,90 @@ class Idecide extends Cgiapp2 {
       // add new participant
       $participant_id = $this->addThing('participant', $participant_details);
       $participant_contact_details['participant_id'] = $participant_id;
-      // add new participant_contact
+      /* add new participant_contact 
+       * (no id to harvest for dependent entity)
+       */
       $this->addThing('participant_contact', $participant_contact_details);
+      $_REQUEST["participant_id"] = $participant_id;
+      $_REQUEST["mode"] = 'consent';
+      return $this->collectConsent();
     }
+
     $error = $this->error;
     $t = 'details.html';
     $t = $this->twig->loadTemplate($t);
     $output = $t->render(array(
-			       'error' => $error
+			       'error' => $error,
 			       ));
     return $output;
+  }
+  /**
+   * collectConsent
+   * get the consent of a particular participant
+   * NB - this mode is only visible if eligible.
+   */
+  function collectConsent() {
+    if (! $_SESSION["eligible"]) {
+      return $this->showStart();
+    }
+    if (isset($_REQUEST["participant_id"])) {
+      $participant_id = $_REQUEST["participant_id"];
+    }
+    else {
+      return $this->collectDetails();
+    }
+    
+    if (isset($_REQUEST["consent_submitted"])) {
+      if($_REQUEST["consent"] == "yes") {
+	$_REQUEST["mode"] = "final";
+	$details = array('eligible' => 'yes', 'consent' => 'yes');
+	$this->updateThing('participant', (int)$participant_id, $details);
+	return $this->showFinal();
+      }
+      else {
+	// delete participant, go to thanks anyway
+	$delete_conditions = array('participant_id' => (int)$participant_id);
+	$this->deleteThings('participant', $delete_conditions);
+	return $this->showIneligible();
+      }
+    }
+    $action = $this->action . '?mode=consent';
+    $error = $this->error;
+    $t = 'consent.html';
+    $t = $this->twig->loadTemplate($t);
+    $output = $t->render(array(
+			       'error' => $error,
+			       'action' => $action,
+			       'participant_id' => $participant_id
+			       ));
+    return $output; 
+  }
+ /**
+   * showFinal
+   * welcome, show the links
+   * behind the scenes:
+   * + randomise Treatment and record in database
+   * + generate username and password (md5 hashed)
+   * + send information to idecide.org.au (New study participant method)
+   * NB - this mode is only visible if eligible.
+   */
+  function showFinal() {
+    if (! $_SESSION["eligible"]) {
+      return $this->showStart();
+    }
+    if (isset($_REQUEST["participant_id"])) {
+      $participant_id = $_REQUEST["participant_id"];
+    }
+    else {
+      return $this->collectDetails();
+    }
+    $error = $this->error;
+    $t = 'final.html';
+    $t = $this->twig->loadTemplate($t);
+    $output = $t->render(array(
+			       'error' => $error,
+			       ));
+    return $output; 
   }
 /* similar to addAddress above but more generic
  * thing is an entity name, eg. template, department
