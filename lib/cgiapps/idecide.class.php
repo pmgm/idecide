@@ -282,6 +282,46 @@ class Idecide extends Cgiapp2 {
     if (! $_SESSION["eligible"]) {
       return $this->showStart();
     }
+    if (isset($_REQUEST['details_submitted'])) {
+      print_r($_REQUEST);
+ 
+      /* these attributes are a subset of the db 
+       * entity 'participant' field names */
+      $participant_attributes = array(
+			 "first_name",
+			 "last_name"
+			 );
+      $participant_details = array();
+      $participant_contact_details = array();
+
+      /* these attributes match the database entity 
+       * 'participant_contact' field names */
+      $contact_attributes = array(
+			     "participant_id",
+			     "email",
+			     "street_address1",
+			     "street_address2",
+			     "city",
+			     "state",
+			     "postcode"
+			     );
+      foreach($_REQUEST as $name=>$value) {
+	if (in_array($name, $participant_attributes)){
+	  $participant_details[$name] = $value;
+	}
+	else if (in_array($name, $contact_attributes)){
+	  $participant_contact_details[$name] = $value;
+	}
+      }
+      // add the enrolment date to the participant details
+      $mysqldatetime = date( 'Y-m-d H:i:s', time());
+      $participant_details['enrolled'] = $mysqldatetime;
+      // add new participant
+      $participant_id = $this->addThing('participant', $participant_details);
+      $participant_contact_details['participant_id'] = $participant_id;
+      // add new participant_contact
+      $this->addThing('participant_contact', $participant_contact_details);
+    }
     $error = $this->error;
     $t = 'details.html';
     $t = $this->twig->loadTemplate($t);
