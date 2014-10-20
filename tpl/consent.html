@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block maintitle %}<h2>Consent to participate in the project</h2>{% endblock %}
+{% block content %}	
+<!-- HOME/MENU PAGE -->
+<!-- ###############################################################-->
+<div class="body-text">
+  <p>I have read and understood the information provided about this project.</p>
+  <p>I understand that this project is for the purpose of research.</p>
+  <p>I understand that I may withdraw from this project at any time.</p>
+  <p>I understand that my identity will be automatically validated against the Australian Electoral Roll for authentication purposes only.</p>
+  <p>I have been informed that the confidentiality of the information provided will be safeguarded subject to any legal requirements.</p>
+  <p>I understand that the information from this project will be used in publications but my identity will be kept confidential.</p>
+  <p>I understand that if the project team have concerns for my child/ren they may engage with others to make them safe. The project team will discuss this with me first.</p>
+  <p>I agree to take part in this project.</p>
+
+<form action="{{ action }}" method="POST">
+  <label for="name_yes">Yes, I consent to the above</label>
+  <input type="radio" name="consent" id="name_yes" value="yes" />
+  <label for="name_no">No, I do not consent</label>
+  <input type="radio" name="consent" id="name_no" value="no" />
+  <input type="hidden" name="participant_id" value="{{ participant_id }}" />
+<button type="submit" class="ui-btn ui-btn-up-c" name="consent_submitted" value="submitted">Next</button>
+</form>
+
+</div>
+<div class="menu-bottom" id="menu-bottom">
+  {% include "copyright.html" %}
+  
+</div>
+</div>
+{% endblock %}
