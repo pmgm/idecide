@@ -16,6 +16,12 @@ require_once(dirname(__FILE__) . "/../../lib/find_path.inc.php");
 require_once($_SERVER["DOCUMENT_ROOT"] . LIBPATH . "/lib/addons/Cgiapp2-2.0.0/Cgiapp2.class.php");
 require_once($_SERVER["DOCUMENT_ROOT"] . LIBPATH . "/lib/addons/Twig/lib/Twig/Autoloader.php");
 require_once($_SERVER["DOCUMENT_ROOT"] . LIBPATH . "/includes/dbconnect.inc.php");
+require_once($_SERVER["DOCUMENT_ROOT"] . LIBPATH . "/lib/spl_class_loader.php");
+$SecurityLibLoader = new SplClassLoader('SecurityLib', $_SERVER["DOCUMENT_ROOT"] . LIBPATH . "/lib/addons");
+$SecurityLibLoader->register();
+$RandomLibLoader = new SplClassLoader('RandomLib', $_SERVER["DOCUMENT_ROOT"] . LIBPATH . "/lib/addons");
+$RandomLibLoader->register();
+
 class Idecide extends Cgiapp2 {
   /**
    * @var array(string mode_name => string description) $run_modes_default_text
@@ -63,6 +69,11 @@ class Idecide extends Cgiapp2 {
     * eligible women can go deeper into registration
     */
    private $eligible;
+   /**
+    * @var generator
+    * randomiser for treatment and password generation
+    */
+   private $generator;
 
    function setup() {
     /** 
@@ -140,15 +151,41 @@ class Idecide extends Cgiapp2 {
     $this->action = $_SERVER['SCRIPT_NAME'];
     $this->sqlstatements();
     $this->eligible = false;
+    $this->makeRandomiser();
   }
- 
+   /* generates a seed for mt_rand
+    * based on RandomLib */
+   private function makeRandomiser() {
+     $factory = new RandomLib\Factory();
+     $this->generator = $factory->getLowStrengthGenerator();
+     /* usage: 
+      * $this->generator->generateInt($min = 0, $max = PHP_INT_MAX);
+      *
+      * Generate a random integer with the given range. 
+      * If range ($max - $min) is zero, $max will be used.
+      */
+     /* usage for string generation:
+      * $this->generator->generateString($length, $characters = '');
+      * Generate a random string of specified length.
+      *
+      * This uses the supplied character list for generating the new result string. 
+      * The list of characters should be specified as a string containing each allowed character.
+      *
+      * If no character list is specified, the following list of characters is used:
+      * 
+      * 0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ./
+
+     /* full docs for RandomLib at:
+      * https://github.com/ircmaxell/RandomLib
+      */
+   }
   /**
    * setup PDO prepared sql statements for use by the program
    * arrays of SELECT, INSERT, UPDATE and DELETE statements
    * this function is a convenient holder for all the SQL 
    * to prevent duplication
    */
-  private function sqlstatements() {
+   private function sqlstatements() {
     $this->select = array( );
     $this->insert = array( 'INSERT INTO :entity (xxx) VALUES (yyy)' );
     $this->update = array( );
@@ -396,6 +433,18 @@ class Idecide extends Cgiapp2 {
     else {
       return $this->collectDetails();
     }
+    /* randomise data and record in database */
+    $treatment = $this->getTreatment();
+    $username = $this->generateUsername();
+    $passwordhash = $this->generateMD5Pass();
+    $data_details = array(
+			  'participant_id' => $participant_id,
+			  'username' => $username,
+			  'passcode' => $passwordhash,
+			  'treatment' => $treatment
+			  );
+    $this->addThing('participant_data', $data_details);
+    
     $error = $this->error;
     $t = 'final.html';
     $t = $this->twig->loadTemplate($t);
@@ -403,6 +452,45 @@ class Idecide extends Cgiapp2 {
 			       'error' => $error,
 			       ));
     return $output; 
+  }
+  /* returns a treatment string, one of CONTROL or INTERVENTION
+   */
+  private function getTreatment() {
+    $treatment_string = "";
+    $treatment_number = $this->generator->generateInt(1,2);
+    if($treatment_number == 1){
+      $treatment_string = "Intervention";
+    }
+    else if ($treatment_number == 2) {
+      $treatment_string = "Control";
+    }
+    return $treatment_string;
+  }
+
+  /* returns a random username, which is not already present in
+   * the database */
+  private function generateUsername() {
+    $name = "";
+    $name = $this->generator->generateString(6, '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ');
+    $table = 'participant_data';
+    $conditions = array('passcode' => $name);
+    $existing_users = $this->getListFromDB($table, $conditions);
+    if (empty($existing_users)) {
+      return $name;     
+    }
+    else {
+      return $this->generateUsername();
+    }
+ 
+  }
+
+  /* return md5 hashed password
+   * not exactly secure but OK for passing to the remote system
+   */
+  private function generateMD5Pass() {
+    $plaintext = $this->generator->generateString(8, '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^+');
+    $hash = md5($plaintext);
+    return $hash;
   }
 /* similar to addAddress above but more generic
  * thing is an entity name, eg. template, department
