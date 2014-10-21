@@ -137,7 +137,8 @@ class Idecide extends Cgiapp2 {
 			   'introduction' => 'showIntro',
 			   'details' => 'collectDetails',
 			   'consent' => 'collectConsent',
-			   'final' => 'showFinal'
+			   'final' => 'showFinal',
+			   'rnd' => 'randomTest'
 			   ));
     // should be an entry for each of the run modes above
     $this->run_modes_default_text = array(
@@ -451,6 +452,22 @@ class Idecide extends Cgiapp2 {
     $output = $t->render(array(
 			       'error' => $error,
 			       ));
+    return $output; 
+  }
+  /* test the username and treatment strings */
+  /* Delete or disable from run-modes for production */
+  function randomTest(){
+    $treatment = $this->getTreatment();
+    $username = $this->generateUsername();
+    $hashed = $this->generateMD5Pass();
+    $error = $this->error;
+    $t = 'test.html';
+    $t = $this->twig->loadTemplate($t);
+    $output = $t->render(array(
+			       'error' => $error,
+			       'username' =>$username,
+			       'treatment' =>  $treatment,
+			       'hash' => $hashed			       ));
     return $output; 
   }
   /* returns a treatment string, one of CONTROL or INTERVENTION
