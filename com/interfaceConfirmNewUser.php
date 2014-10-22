@@ -5,6 +5,12 @@ header('Access-Control-Allow-Origin: http://www.icanplan4safety.ca');
 /* https://<idecideregistration>/com/interfaceConfirmNewUser.php?pid=5
  * where pid = participant_id
  */
+/* This file gathers the pid request and updates the participant table if:
+ * + the participant_id corresponding to pid exists
+ * + the participant is eligible,
+ * + has consented to participate,
+ * + has enrolled and
+ * + the participant has not already been confirmed by this process
 require_once(dirname(__FILE__) . "/../lib/find_path.inc.php");
 require_once($_SERVER["DOCUMENT_ROOT"] . LIBPATH . "/includes/dbconnect.inc.php");
 require_once($_SERVER["DOCUMENT_ROOT"] . LIBPATH . "/lib/pmgmCRUD/pmgmCRUD.php");
