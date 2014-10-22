@@ -21,6 +21,7 @@ $SecurityLibLoader = new SplClassLoader('SecurityLib', $_SERVER["DOCUMENT_ROOT"]
 $SecurityLibLoader->register();
 $RandomLibLoader = new SplClassLoader('RandomLib', $_SERVER["DOCUMENT_ROOT"] . LIBPATH . "/lib/addons");
 $RandomLibLoader->register();
+require_once($_SERVER["DOCUMENT_ROOT"] . LIBPATH . "/includes/idecide.inc.php");
 
 class Idecide extends Cgiapp2 {
   /**
@@ -434,18 +435,36 @@ class Idecide extends Cgiapp2 {
     else {
       return $this->collectDetails();
     }
+    $participant_list = $this->getListFromDB('participant_contact', array("participant_id" => $participant_id));
+    if (! empty($participant_list)) {
+      $participant_contact = $participant_list[0];
+    }
+    $site = $participant_contact->state;
     /* randomise data and record in database */
     $treatment = $this->getTreatment();
     $username = $this->generateUsername();
     $passwordhash = $this->generateMD5Pass();
+    
+    
     $data_details = array(
 			  'participant_id' => $participant_id,
 			  'username' => $username,
 			  'passcode' => $passwordhash,
-			  'treatment' => $treatment
+			  'treatment' => $treatment,
+			  'site' => $site
 			  );
     $this->addThing('participant_data', $data_details);
-    
+    $schedule = $this->generateSchedule($participant_id);
+    $user = array(
+		  'id' => $participant_id,
+		  'username' =>$username,
+		  'passcode' => $passwordhash,
+		  'treatment' => $treatment,
+		  'site' => $site,
+		  'schedule' => $schedule
+		  );
+    $data = array($participant_id => $user);
+    //print_r($data);
     $error = $this->error;
     $t = 'final.html';
     $t = $this->twig->loadTemplate($t);
@@ -453,6 +472,53 @@ class Idecide extends Cgiapp2 {
 			       'error' => $error,
 			       ));
     return $output; 
+  }
+  /* given a participant_id,
+   * generates a schedule for the participant
+   * updates the schedule table
+   * returns an array of the information in the format:
+   * order:
+   * + participantId : participant_id
+   * + surveyKeyword: (survey.surveyKeyword)
+   * + survey: (survey.survey)
+   * + surveyType: Primary
+   * + dateScheduled (baseline is enrollment date, calculate others)
+   * + dateActual (= to dateScheduled)
+   */
+  private function generateSchedule($participant_id) {
+    $schedule = array();
+    $usable_surveys = array(1, 3, 4);
+    $survey_info = array();
+    foreach ($usable_surveys as $survey_id) {
+      $temp = $this->getListFromDB('survey', array('survey_id' => $survey_id));
+      if(! empty($temp)){
+	$survey_info[] = $temp[0];
+      }
+    }
+    $counter = count($usable_surveys);
+    $surveyType = "Primary";
+    for ($order = 1; $order <= $counter; $order++){
+      $time_multiplier = 6 * ($order-1);
+      $dateScheduled = date( 'Y-m-d H:i:s', strtotime("+$time_multiplier month"));
+      $schedule_details = array(
+				'participant_id' => (int)$participant_id,
+				'survey_id' => $usable_surveys[$order -1],
+				'order_index' => $order,
+				'surveyType' => $surveyType,
+				'dateScheduled' => $dateScheduled,
+				'dateActual' => $dateScheduled
+				);
+      $this->addThing('schedule', $schedule_details);
+      $schedule[strval($order)] = array(
+				    "participantId" => $participant_id,
+				    "surveyKeyword" => $survey_info[$order-1]->surveyKeyword,
+				    "survey" => $survey_info[$order-1]->survey,
+				    "surveyType" => $surveyType,
+				    "dateScheduled" => $dateScheduled,
+				    "dateActual" => $dateScheduled
+				    );
+    }
+    return $schedule;
   }
   /* test the username and treatment strings */
   /* Delete or disable from run-modes for production */
