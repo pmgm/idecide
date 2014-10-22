@@ -25,6 +25,7 @@ try {
       $participant_info = $participant_list[0];
       if ($participant_info->eligible == 'yes' and
 	  $participant_info->consent == 'yes' and
+	  $participant_info->confirmed != 'yes' and
 	  ! empty($participant_info->enrolled) ) {
 	/* update the confirmed field to 'yes' */
 	$returnid = $dao->updateThing($table, $participant_id, array('confirmed' => 'yes'));
@@ -36,4 +37,6 @@ catch(PDOException $e) {
   echo('ERROR: ' . $e->getMessage());
   $conn = null;
 }
+/* for testing */
+/*echo($returnid);*/
 ?>
