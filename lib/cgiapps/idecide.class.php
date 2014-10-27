@@ -482,6 +482,7 @@ class Idecide extends Cgiapp2 {
     $t = $this->twig->loadTemplate($t);
     $output = $t->render(array(
 			       'error' => $error,
+			       'login_url' => IDECIDE_LOGIN
 			       ));
     return $output; 
   }
