@@ -460,11 +460,23 @@ class Idecide extends Cgiapp2 {
 		  'username' =>$username,
 		  'passcode' => $passwordhash,
 		  'treatment' => $treatment,
-		  'site' => $site,
-		  'schedule' => $schedule
+		  'site' => $site
 		  );
-    $data = array($participant_id => $user);
+    $data_contents = array('user' => $user, 'schedule' => $schedule);
+    $data = array('data' => array($participant_id => $data_contents));
     //print_r($data);
+    /* send data to remote idecide via curl */
+    $query = http_build_query($data);
+    print_r($query);
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, IDECIDE_REGISTER);
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $query);
+    // execute post
+    $result = curl_exec($ch);
+    // close connection
+    curl_close($ch);
+    /* output final screen */
     $error = $this->error;
     $t = 'final.html';
     $t = $this->twig->loadTemplate($t);

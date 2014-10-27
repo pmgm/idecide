@@ -11,6 +11,7 @@ header('Access-Control-Allow-Origin: http://www.icanplan4safety.ca');
  * + has consented to participate,
  * + has enrolled and
  * + the participant has not already been confirmed by this process
+ */
 require_once(dirname(__FILE__) . "/../lib/find_path.inc.php");
 require_once($_SERVER["DOCUMENT_ROOT"] . LIBPATH . "/includes/dbconnect.inc.php");
 require_once($_SERVER["DOCUMENT_ROOT"] . LIBPATH . "/lib/pmgmCRUD/pmgmCRUD.php");
