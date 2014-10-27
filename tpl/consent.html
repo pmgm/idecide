@@ -3,7 +3,8 @@
 {% block content %}	
 <!-- HOME/MENU PAGE -->
 <!-- ###############################################################-->
-<div class="body-text">
+<div class="section-content content-margin">
+<div class="body-text margin-top-30">
   <p>I have read and understood the information provided about this project.</p>
   <p>I understand that this project is for the purpose of research.</p>
   <p>I understand that I may withdraw from this project at any time.</p>
@@ -21,7 +22,7 @@
   <input type="hidden" name="participant_id" value="{{ participant_id }}" />
 <button type="submit" class="ui-btn ui-btn-up-c" name="consent_submitted" value="submitted">Next</button>
 </form>
-
+</div>
 </div>
 <div class="menu-bottom" id="menu-bottom">
   {% include "copyright.html" %}

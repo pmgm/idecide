@@ -3,7 +3,8 @@
 {% block content %}	
 <!-- HOME/MENU PAGE -->
 <!-- ###############################################################-->
-<div>
+<div class="section-content content-margin">
+<div class="body-text">
 <form action="{{ action }}" method="POST">
 <fieldset>
   <legend>Are you female?</legend>
@@ -36,7 +37,7 @@
 </fieldset>
 <button type="submit" class="ui-btn ui-btn-up-c" name="eligible_submitted" value="submitted">Next</button>
 </form>
-
+</div>
 </div>
 <div class="menu-bottom" id="menu-bottom">
   {% include "copyright.html" %}

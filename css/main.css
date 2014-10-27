@@ -270,7 +270,10 @@ textarea.ui-input-text{
 	
 	margin: 0 auto 30px auto;
 }
-
+.content-margin {
+    /* added by PM 2014-10-27 */
+    margin: auto 3em;
+}
 .section-narrative-top {
 	margin:25px 0 0 0;
 }
