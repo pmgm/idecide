@@ -141,13 +141,18 @@ class Idecide extends Cgiapp2 {
 			   /*'rnd' => 'randomTest',*/
 			   'duplicate' => 'failToRegister',
 			   'safety' => 'showSafety',
-			   'resources' => 'showResources'
+			   'resources' => 'showResources',
+			   'contact' => 'showContact'
 			   ));
-    // should be an entry for each of the run modes above
-    $this->run_modes_default_text = array(
-					  'start' => 'Home'
-					  );
-    $this->user_visible_modes = array();
+    // should be an entry correseponding to a subset of run modes above
+    /* mode => menu title
+     */
+    $this->run_modes_default_text = array();
+    $this->user_visible_modes = array(
+			      'resources' => 'Resources',
+			      'safety' => 'Safety',
+			      'contact' => 'Contact Us'
+			      );
     $admin_visible = array();
     $this->start_mode('start');
     $this->error_mode('handle_errors');
@@ -224,17 +229,13 @@ class Idecide extends Cgiapp2 {
    * showStart
    */
   function showStart() {
-    $error = $this->error;
     $starturl = $this->action . '?mode=eligible';
-    $t = 'start.html';
-    $t = $this->twig->loadTemplate($t);
-    $output = $t->render(array(
-			       'starturl' => $starturl,
-			       'error' => $error
-			       ));
+    $extra = array('starturl' => $starturl);
+    $output = $this->outputBoilerplate('start.html', $extra);
     return $output;
   }
-  /**
+ 
+ /**
    * determineEligibility
    * correct responses to these questions will allow you to 
    * enter your details
@@ -273,13 +274,7 @@ class Idecide extends Cgiapp2 {
 	return $this->showIneligible();
       }
     }
-    
-    $error = $this->error;
-    $t = 'eligibility.html';
-    $t = $this->twig->loadTemplate($t);
-    $output = $t->render(array(
-			       'error' => $error
-			       ));
+    $output = $this->outputBoilerplate('eligibility.html');
     return $output;
   }
   /**
@@ -287,13 +282,8 @@ class Idecide extends Cgiapp2 {
    * screen to show if the user is ineligible to continue
    */
   function showIneligible() {
-    $error = $this->error;
-    $t = 'ineligible.html';
-    $t = $this->twig->loadTemplate($t);
-    $output = $t->render(array(
-			       'error' => $error
-			       ));
-    return $output;
+     $output = $this->outputBoilerplate('ineligible.html');
+     return $output;
   }
   /**
    * showIntro
@@ -305,13 +295,8 @@ class Idecide extends Cgiapp2 {
       return $this->showStart();
     }
     $nexturl = $this->action . '?mode=details';
-    $error = $this->error;
-    $t = 'introduction.html';
-    $t = $this->twig->loadTemplate($t);
-    $output = $t->render(array(
-			       'error' => $error,
-			       'next' => $nexturl
-			       ));
+    $extra = array('next' => $nexturl);
+    $output = $this->outputBoilerplate('introduction.html', $extra);
     return $output;
   }
 
@@ -371,12 +356,7 @@ class Idecide extends Cgiapp2 {
       $_REQUEST["mode"] = 'consent';
       return $this->collectConsent();
     }
-    $error = $this->error;
-    $t = 'details.html';
-    $t = $this->twig->loadTemplate($t);
-    $output = $t->render(array(
-			       'error' => $error,
-			       ));
+    $output = $this->outputBoilerplate('details.html');
     return $output;
   }
   /* checks database for an existing email address before registration
@@ -423,16 +403,29 @@ class Idecide extends Cgiapp2 {
     $output = $this->outputBoilerplate('resources.html');
     return $output;
   }
+
+ /**
+   * showContact
+   * display computer safety screen
+   */
+  function showContact() {
+    $output = $this->outputBoilerplate('contact.html');
+    return $output;
+  }
   /* returns the rendered template for output
    * $twig_template is the template name
    * $extra is an array of twig variables for that template (default is empty)
-   * 'error' is always included and defaults to the value of $this->error
+   * $common_variables is always included. It contains
+   * $this->error and $this->user_visible_modes (for nav menu)
    */
   private function outputBoilerplate($twig_template, $extra = array()) {
     $error = $this->error;
     $t = $twig_template;
     $t = $this->twig->loadTemplate($t);
-    $output_array = array_merge(array('error' => $error), $extra);
+    $common_variables =  array('error' => $error, 
+			       'modes' => $this->user_visible_modes,
+			       'login_url' => IDECIDE_LOGIN);
+    $output_array = array_merge($common_variables, $extra);
     $output = $t->render($output_array);
     return $output;
   }
@@ -468,14 +461,9 @@ class Idecide extends Cgiapp2 {
       }
     }
     $action = $this->action . '?mode=consent';
-    $error = $this->error;
-    $t = 'consent.html';
-    $t = $this->twig->loadTemplate($t);
-    $output = $t->render(array(
-			       'error' => $error,
-			       'action' => $action,
-			       'participant_id' => $participant_id
-			       ));
+    $extra = array('action' => $action,
+		   'participant_id' => $participant_id);
+    $output = $this->outputBoilerplate('consent.html', $extra);
     return $output; 
   }
  /**
@@ -539,13 +527,7 @@ class Idecide extends Cgiapp2 {
     // close connection
     curl_close($ch);
     /* output final screen */
-    $error = $this->error;
-    $t = 'final.html';
-    $t = $this->twig->loadTemplate($t);
-    $output = $t->render(array(
-			       'error' => $error,
-			       'login_url' => IDECIDE_LOGIN
-			       ));
+    $output = $this->outputBoilerplate('final.html');
     return $output; 
   }
   /* given a participant_id,
@@ -601,14 +583,10 @@ class Idecide extends Cgiapp2 {
     $treatment = $this->getTreatment();
     $username = $this->generateUsername();
     $hashed = $this->generateMD5Pass();
-    $error = $this->error;
-    $t = 'test.html';
-    $t = $this->twig->loadTemplate($t);
-    $output = $t->render(array(
-			       'error' => $error,
-			       'username' =>$username,
-			       'treatment' =>  $treatment,
-			       'hash' => $hashed			       ));
+    $extra = array('username' =>$username,
+		   'treatment' =>  $treatment,
+		   'hash' => $hashed);
+    $output = $this->outputBoilerplate('test.html', $extra);
     return $output; 
   }
   /* returns a treatment string, one of CONTROL or INTERVENTION

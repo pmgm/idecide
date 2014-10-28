@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block maintitle %}<h2>Test random function</h2>{% endblock %}
+{% block content %}	
+<!-- HOME/MENU PAGE -->
+<!-- ###############################################################-->
+<div class="body-text">
+  <p>Username: {{ username }}, treatment: {{ treatment }}</p>
+  <p>hashed password is {{ hash }}</p>
+
+</div>
+<div class="menu-bottom" id="menu-bottom">
+  {% include "copyright.html" %}
+  
+</div>
+</div>
+{% endblock %}
