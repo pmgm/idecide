@@ -129,7 +129,6 @@ class Idecide extends Cgiapp2 {
      * set up the legal run modes => methods table
      * note that login screen is handled outside of the app
      * these run modes assume access is allowed
-     * (see passport)
      */
     $this->run_modes(array(
 			   'start' => 'showStart',
@@ -139,7 +138,10 @@ class Idecide extends Cgiapp2 {
 			   'details' => 'collectDetails',
 			   'consent' => 'collectConsent',
 			   'final' => 'showFinal',
-			   'rnd' => 'randomTest'
+			   /*'rnd' => 'randomTest',*/
+			   'duplicate' => 'failToRegister',
+			   'safety' => 'showSafety',
+			   'resources' => 'showResources'
 			   ));
     // should be an entry for each of the run modes above
     $this->run_modes_default_text = array(
@@ -352,6 +354,9 @@ class Idecide extends Cgiapp2 {
 	  $participant_contact_details[$name] = $value;
 	}
       }
+      if ($this->isEmailDuplicate($participant_contact_details["email"])) {
+	return $this->failToRegister();
+      }
       // add the enrolment date to the participant details
       $mysqldatetime = date( 'Y-m-d H:i:s', time());
       $participant_details['enrolled'] = $mysqldatetime;
@@ -366,7 +371,6 @@ class Idecide extends Cgiapp2 {
       $_REQUEST["mode"] = 'consent';
       return $this->collectConsent();
     }
-
     $error = $this->error;
     $t = 'details.html';
     $t = $this->twig->loadTemplate($t);
@@ -375,6 +379,64 @@ class Idecide extends Cgiapp2 {
 			       ));
     return $output;
   }
+  /* checks database for an existing email address before registration
+   * returns TRUE if the email exists in the database,
+   * FALSE otherwise.
+   */
+  private function isEmailDuplicate($email) {
+    $existing = $this->getListFromDB('participant_contact', array("email" => $email));
+    if (! empty($existing)) {
+      $email_exists = true;
+    }
+    else {
+      $email_exists = false;
+    }
+    return $email_exists;
+  }
+
+  /**
+   * failToRegister
+   * show this screen if registration fails for some reason
+   * (different from showIneligible). For now the only reason
+   * this gets called is a duplicate email address in
+   * collectDetails
+   */
+  function failToRegister() {
+    $output = $this->outputBoilerplate('duplicate.html');
+    return $output;
+  }
+
+  /**
+   * showSafety
+   * display computer safety screen
+   */
+  function showSafety() {
+    $output = $this->outputBoilerplate('safety.html');
+    return $output;
+  }
+  
+  /** 
+   * showResources
+   * display resources static page
+   */
+  function showResources() {
+    $output = $this->outputBoilerplate('resources.html');
+    return $output;
+  }
+  /* returns the rendered template for output
+   * $twig_template is the template name
+   * $extra is an array of twig variables for that template (default is empty)
+   * 'error' is always included and defaults to the value of $this->error
+   */
+  private function outputBoilerplate($twig_template, $extra = array()) {
+    $error = $this->error;
+    $t = $twig_template;
+    $t = $this->twig->loadTemplate($t);
+    $output_array = array_merge(array('error' => $error), $extra);
+    $output = $t->render($output_array);
+    return $output;
+  }
+
   /**
    * collectConsent
    * get the consent of a particular participant
