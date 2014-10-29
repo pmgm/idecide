@@ -484,7 +484,7 @@ a:active.btn-danger-assess {
   -moz-transition:0.1s all ease-in-out;
   transition:0.1s all ease-in-out;
 	overflow: hidden;
-	background-image: url("images/icn_heart_white.html");
+	background-image: url("images/icn_heart_white.png");
 	background-repeat: no-repeat;
 	background-position: center top 40px;
 	background-size: 55px 51px;
@@ -519,7 +519,7 @@ a:hover.btn-decide-health {
   -moz-transition:0.3s all ease-in-out;
   transition:0.3s all ease-in-out;
 	overflow: hidden;
-	background-image: url("images/icn_heart_colour.html");
+	background-image: url("images/icn_heart_colour.png");
 	background-repeat: no-repeat;
 	background-position: center top 45px;
 	background-size: 37px 34px;
@@ -541,7 +541,7 @@ a:hover.btn-decide-health {
 	position: relative;
 	top: 55%;
 	left:8%;
-	background-image: url("images/icn_tick_aqua.html");
+	background-image: url("images/icn_tick_aqua.png");
 	background-repeat: no-repeat;
 	background-position: center left 28px;
 	background-size: 18px 16px;
@@ -556,7 +556,7 @@ a:hover.btn-decide-health {
   -moz-transition:0.1s all ease-in-out;
   transition:0.1s all ease-in-out;
 	overflow: hidden;
-	background-image: url("images/icn_safety_white.html");
+	background-image: url("images/icn_safety_white.png");
 	background-repeat: no-repeat;
 	background-position: center top 25px;
 	background-size: 60px 70px;
@@ -591,7 +591,7 @@ a:hover.btn-decide-safety {
   -moz-transition:0.3s all ease-in-out;
   transition:0.3s all ease-in-out;
 	overflow: hidden;
-	background-image: url("images/icn_safety_colour.html");
+	background-image: url("images/icn_safety_colour.png");
 	background-repeat: no-repeat;
 	background-position: center top 40px;
 	background-size: 39px 46px;
@@ -613,7 +613,7 @@ a:hover.btn-decide-safety {
 	position: relative;
 	top: 60%;
 	left:8%;
-	background-image: url("images/icn_tick_blue.html");
+	background-image: url("images/icn_tick_blue.png");
 	background-repeat: no-repeat;
 	background-position: center left 28px;
 	background-size: 18px 16px;
@@ -628,7 +628,7 @@ a:hover.btn-decide-safety {
   -moz-transition:0.1s all ease-in-out;
   transition:0.1s all ease-in-out;
 	overflow: hidden;
-	background-image: url("images/icn_star_white.html");
+	background-image: url("images/icn_star_white.png");
 	background-repeat: no-repeat;
 	background-position: center top 30px;
 	background-size: 56px 55px;
@@ -663,7 +663,7 @@ a:hover.btn-decide-priority {
   -moz-transition:0.3s all ease-in-out;
   transition:0.3s all ease-in-out;
 	overflow: hidden;
-	background-image: url("images/icn_star_colour.html");
+	background-image: url("images/icn_star_colour.png");
 	background-repeat: no-repeat;
 	background-position: center top 40px;
 	background-size: 39px 38px;
@@ -685,7 +685,7 @@ a:hover.btn-decide-priority {
 	position: relative;
 	top: 60%;
 	left:8%;
-	background-image: url("images/icn_tick_purple.html");
+	background-image: url("images/icn_tick_purple.png");
 	background-repeat: no-repeat;
 	background-position: center left 28px;
 	background-size: 18px 16px;
