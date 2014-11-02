@@ -22,6 +22,7 @@ $SecurityLibLoader->register();
 $RandomLibLoader = new SplClassLoader('RandomLib', $_SERVER["DOCUMENT_ROOT"] . LIBPATH . "/lib/addons");
 $RandomLibLoader->register();
 require_once($_SERVER["DOCUMENT_ROOT"] . LIBPATH . "/includes/idecide.inc.php");
+include_once($_SERVER["DOCUMENT_ROOT"] . LIBPATH . "/includes/email_admin.inc.php");
 
 class Idecide extends Cgiapp2 {
   /**
@@ -295,7 +296,8 @@ class Idecide extends Cgiapp2 {
       return $this->showStart();
     }
     $nexturl = $this->action . '?mode=details';
-    $extra = array('next' => $nexturl);
+    $safety = $this->action . '?mode=safety';
+    $extra = array('next' => $nexturl, 'safetyurl' => $safety);
     $output = $this->outputBoilerplate('introduction.html', $extra);
     return $output;
   }
@@ -473,6 +475,7 @@ class Idecide extends Cgiapp2 {
    * + randomise Treatment and record in database
    * + generate username and password (md5 hashed)
    * + send information to idecide.org.au (New study participant method)
+    * (either participant or team member)
    * NB - this mode is only visible if eligible.
    */
   function showFinal() {
@@ -493,7 +496,8 @@ class Idecide extends Cgiapp2 {
     /* randomise data and record in database */
     $treatment = $this->getTreatment();
     $username = $this->generateUsername();
-    $passwordhash = $this->generateMD5Pass();
+    $plaintext = $this->generator->generateString(8, '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^+');
+    $passwordhash = md5($plaintext);
     
     
     $data_details = array(
@@ -526,6 +530,28 @@ class Idecide extends Cgiapp2 {
     $result = curl_exec($ch);
     // close connection
     curl_close($ch);
+    /* send emails
+     * + to participant
+     * + to admin
+     */
+    $participant_list2 = $this->getListFromDB('participant', array("participant_id" => $participant_id));
+    if (! empty($participant_list2)) {
+      $participant = $participant_list2[0];
+    }
+    $recipient = $participant_contact->email;
+    $subject = "Welcome to I-DECIDE";
+    $email_array = array(
+		    'first_name' => $participant->first_name,
+		    'username' => $username,
+		    'password' => $plaintext
+		    );
+    $t2 = 'participant_email.txt';
+    $t2 = $this->twig->loadTemplate($t2);
+    $message_text = $t2->render($email_array);
+    $message_text = wordwrap($message_text, 70);
+    $headers = $this->email_headers(array());
+    $emailsuccess = mail($recipient, $subject, $message_text, $headers);
+    $emailsuccess2 = mail(ADMIN_EMAIL, $subject, $message_text, $headers);
     /* output final screen */
     $output = $this->outputBoilerplate('final.html');
     return $output; 
@@ -622,6 +648,7 @@ class Idecide extends Cgiapp2 {
 
   /* return md5 hashed password
    * not exactly secure but OK for passing to the remote system
+   * deprecated (these functions called in showFinal)
    */
   private function generateMD5Pass() {
     $plaintext = $this->generator->generateString(8, '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^+');
