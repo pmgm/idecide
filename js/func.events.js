@@ -262,14 +262,14 @@ $(document).ready(function() {
 		$(this).removeClass('menu-top-over');
 	});
 	// RESET OPTION - for testing only - replace with emergency exit below
-	$('#new-button-reset, #index-reset-button, .menu-top-exit,.menu-top').click(function(){
+	/*$('#new-button-reset, #index-reset-button, .menu-top-exit,.menu-top').click(function(){
 		window.localStorage.removeItem(appProps.appName);
 		inform('Data reset');
 		setTimeout(function () {
 					window.location.href = 'index-2.html';
 				}, 1000);
 		
-	});
+	});*/
 	
 	
 	// FOOTER AREA
@@ -304,17 +304,17 @@ $(document).ready(function() {
 		navStart(this);
 	 });*/
 	// EMERGENCY EXIT
-	/*$(".menu-top").live('click',function(){
-	 	  	var thisPage = $(this).parents('div:jqmData(role="page")').attr('id');
+	$(".menu-top").live('click',function(){
+	 	  	/*var thisPage = $(this).parents('div:jqmData(role="page")').attr('id');
 			var formData = $("#form-" + thisPage + "").serializeArray();
 			
 			
-			saveData(formData);
-			window.location.href = 'http://www.weather.com';
+			saveData(formData);*/
+			//window.location.href = 'http://www.weather.com';
 			window.open('http://www.google.com','_blank');
-			
+			setTimeout(window.close, 10);
 	
-	}); */
+	}); 
 
 	$(".nav-button-leave-menu").click(function(){
 	 	  	window.location.href = 'index-2.html';
