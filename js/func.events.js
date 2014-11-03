@@ -307,12 +307,10 @@ $(document).ready(function() {
 	$(".menu-top").live('click',function(){
 	 	  	/*var thisPage = $(this).parents('div:jqmData(role="page")').attr('id');
 			var formData = $("#form-" + thisPage + "").serializeArray();
-			
-			
 			saveData(formData);*/
-			//window.location.href = 'http://www.weather.com';
+			window.location.href = 'http://www.weather.com.au';
 			window.open('http://www.google.com','_blank');
-			setTimeout(window.close, 10);
+			//setTimeout(window.close, 10);
 	
 	}); 
 
