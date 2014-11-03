@@ -1,0 +1,16 @@
+Hello {{ first_name }},
+
+Thank you for signing up to the I-DECIDE project.
+
+To log in to the project, please visit 
+{{ login_url }}
+with these credentials:
+
+Username {{ username }}
+Password {{ password }}
+
+Thank you.
+
+The I-DECIDE project team.
+
+Please do not reply to this email.

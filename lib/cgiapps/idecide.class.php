@@ -540,18 +540,27 @@ class Idecide extends Cgiapp2 {
     }
     $recipient = $participant_contact->email;
     $subject = "Welcome to I-DECIDE";
+    $subject2 = "New I-DECIDE participant";
     $email_array = array(
 		    'first_name' => $participant->first_name,
 		    'username' => $username,
 		    'password' => $plaintext
 		    );
+    $admin_info = array('last_name' => $participant->last_name,
+			'email' => $recipient,
+			'participant_id' => $participant_id);
+    $admin_email_array = array_merge($email_array, $admin_info);
     $t2 = 'participant_email.txt';
     $t2 = $this->twig->loadTemplate($t2);
+    $t3 = 'admin_new_participant.txt';
+    $t3 = $this->twig->loadTemplate($t3);
     $message_text = $t2->render($email_array);
     $message_text = wordwrap($message_text, 70);
+    $message_text2 = $t3->render($admin_email_array);
+    $message_text2 = wordwrap($message_text2, 70);
     $headers = $this->email_headers(array());
     $emailsuccess = mail($recipient, $subject, $message_text, $headers);
-    $emailsuccess2 = mail(ADMIN_EMAIL, $subject, $message_text, $headers);
+    $emailsuccess2 = mail(ADMIN_EMAIL, $subject2, $message_text2, $headers);
     /* output final screen */
     $output = $this->outputBoilerplate('final.html');
     return $output; 

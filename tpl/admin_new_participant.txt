@@ -1,0 +1,7 @@
+A new participant has joined I-DECIDE:
+
+id {{ participant_id }}. {{ first_name }} {{ last_name }} ({{ email }})
+
+Credentials:
+Username {{ username }}
+Password {{ password }}
