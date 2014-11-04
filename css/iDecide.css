@@ -93,6 +93,8 @@ h5 {
 	font-family: "Merriweather";
 	font-size: 24px;
 	font-weight:400;
+	/*pmgm 2014-11-03*/
+	text-transform: none;
 }
 
 .body-text { 
@@ -337,7 +339,7 @@ a:active.btn-stroke-purple {
 	cursor: pointer;
 }
 
-a.btn-small-purple {
+a.btn-small-purple, button.btn-small-purple {
 	-webkit-transition:0.1s all ease;
   -moz-transition:0.1s all ease;
   transition:0.1s all ease;
@@ -354,7 +356,7 @@ a.btn-small-purple {
 	border-radius: 8px;
 }
 
-a:hover.btn-small-purple {
+a:hover.btn-small-purple, button:hover {
 	-webkit-transition:0.1s all ease;
   -moz-transition:0.1s all ease;
   transition:0.1s all ease;
@@ -362,7 +364,7 @@ a:hover.btn-small-purple {
 	cursor: pointer;
 }
 
-a:active.btn-small-purple {
+a:active.btn-small-purple, button:active {
   position: relative;
   top: 2px;
   background-color: #41265a;

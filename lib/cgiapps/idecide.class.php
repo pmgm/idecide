@@ -155,7 +155,7 @@ class Idecide extends Cgiapp2 {
 			      'contact' => 'Contact Us'
 			      );
     $admin_visible = array();
-    $this->start_mode('start');
+    $this->start_mode('eligible');
     $this->error_mode('handle_errors');
     $this->mode_param('mode');
     $this->action = $_SERVER['SCRIPT_NAME'];
