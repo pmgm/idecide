@@ -327,6 +327,7 @@ class Idecide extends Cgiapp2 {
       $contact_attributes = array(
 			     "participant_id",
 			     "email",
+			     "alternate_email",
 			     "street_address1",
 			     "street_address2",
 			     "city",
