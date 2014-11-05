@@ -47,6 +47,12 @@ class Idecide extends Cgiapp2 {
    * PDO database connection
    */
   private $conn;
+  /** 
+   * @var object $conn2
+   * PDO database connection
+   * for accessing idecide_extra database
+   */
+  private $conn2;
   /**
    * @var error
    * error messages
@@ -498,8 +504,21 @@ class Idecide extends Cgiapp2 {
     $treatment = $this->getTreatment();
     $username = $this->generateUsername();
     $plaintext = $this->generator->generateString(8, '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^+');
+    /* store plaintext password details */
+    try {
+      $this->conn2 = new PDO(DBCONNECT2, DBUSER, DBPASS);
+      $this->conn2->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
+      $this->conn2->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    }
+    catch(PDOException $e) {
+      $this->error = 'ERROR: ' . $e->getMessage();
+      $this->conn2 = null;
+    }
+    $participant_password_info = array('participant_id' => $participant_id,
+				       'plain_text_pass' => $plaintext);
+    $this->addThing('participant_password', $participant_password_info, $this->conn2);
+    $this->conn2 = null;
     $passwordhash = md5($plaintext);
-    
     
     $data_details = array(
 			  'participant_id' => $participant_id,
@@ -669,10 +688,15 @@ class Idecide extends Cgiapp2 {
  * thing is an entity name, eg. template, department
  * thing_details is an array of (property_name => property_value)
  * for the thing
+ * $connection is a PDO connection object, defaults to $this->conn
  * returns the id of the new thing
+ * or -1 if it has no primary key
  */
-private function addThing($thing, $thing_details) {
-  $thing_id = -1;
+  private function addThing($thing, $thing_details, $connection = -1) {
+    if($connection === -1) {
+      $connection = $this->conn;
+    }
+    $thing_id = -1;
   $statement = $this->insert[0];
   $column_names = array_keys($thing_details);
   $statement = str_replace('xxx', implode(', ', $column_names), $statement);
@@ -680,7 +704,7 @@ private function addThing($thing, $thing_details) {
   $statement = str_replace('yyy', implode(', :', $column_names), $statement);
   $statement = str_replace(':entity', $thing, $statement);
 try {
-      $stmt = $this->conn->prepare($statement);
+      $stmt = $connection->prepare($statement);
       $stmt->execute($thing_details);
 }
     catch (Exception $e) {
