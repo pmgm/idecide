@@ -1,0 +1,239 @@
+              I-DECIDE registration system documentation
+              ==========================================
+
+Author: Patrick Maslen
+Date: 2014-11-06 14:00:19 AEDT
+
+
+Table of Contents
+=================
+1 For developers
+    1.1 locations
+        1.1.1 php-enabled web server (production)
+        1.1.2 database
+        1.1.3 remote system i-decide.org.au
+        1.1.4 github repository
+    1.2 the code
+        1.2.1 lib/cgiapps/idecide.class.php
+        1.2.2 com/interfaceConfirmNewUser.php
+    1.3 the twig templates
+    1.4 Files and folders
+        1.4.1 css
+        1.4.2 images
+        1.4.3 includes
+        1.4.4 index.php
+        1.4.5 js
+        1.4.6 lib
+        1.4.7 tpl
+        1.4.8 twigcache
+    1.5 database structure
+        1.5.1 entities
+2 How do I...?
+    2.1 change the contents of the user email
+    2.2 change the contents of the admin email
+
+
+1 For developers 
+-----------------
+This document is intended for developers of the system
+
+1.1 locations 
+==============
+
+1.1.1 php-enabled web server (production) 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+585s-dgp-three.gpph.unimelb.edu.au/web_subsite/dept/i-decide/idecide/
+[http://www.gp.unimelb.edu.au/i-decide/signup]
+* technical requirements/environment 
+  + PHP 5
+    + PDO enabled for MySQL
+    + Twig
+    + cgiapp2 (in lib folder)
+    + mail-enabled
+  
+
+1.1.2 database 
+~~~~~~~~~~~~~~~
+MySQL server
+
+databases:
+Production
++ idecide
++ idecide_extra
++ idecide_test
++ idecide_test_extra
+Username: idecide_user
+password info is in includes/dbconnect
+
+see also [*database structure]
+
+[*database structure]: sec-1-5
+
+1.1.3 remote system i-decide.org.au 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+1.1.4 github repository 
+~~~~~~~~~~~~~~~~~~~~~~~~
+[https://github.com/pmgm/idecide] is the repo for the whole website. The repo is mine and I won't give you push access, but you can pull from it, fork it, send pull requests or whatever.
+
+1.2 the code 
+=============
+The main parts of code you are likely to change:
+
+1.2.1 lib/cgiapps/idecide.class.php 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+This is a cgiapp2 subclass and the main repository of code. Here's the basics of what you need to know to work with cgiapp.
+1. Each screen of the app (called a /mode/) is mapped to a *public function* in stationery.class.php
+   + except for setup(), teardown(), handle_errors(), which are reserved for the application and do exactly what they say.
+2. the modes are mapped to functions by an internal variable, $this->run_modes, defined in setup()
+3. You can access a particular mode via the url index.php?mode=X where X is the mode name.
+4. no functions except the modes can be accessed from outside the application via URL parameters
+5. Each mode outputs values to a template, in this case using the Twig template system
+6. The templates are located in the tpl/ folder.
+
+1.2.2 com/interfaceConfirmNewUser.php 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+This is a receiver file which waits for an http request and updates the database when received.
+
+1.3 the twig templates 
+=======================
+The templates contain all of the HTML and email output of the application, modified by website's css and js. They output as normal HTML after being interpreted by the stationery application.
+Good docs for Twig are found at [http://twig.sensiolabs.org/]
+The templates contain a mixture of 
++ text, which in most cases is HTML
++ values sent from the stationery.class.php app enclosed {{ thusly|filter }}. 
+  + The /filter/ if present is a Twig enhancement or change to the value.
++ twig functions like {% this %} which include branches and loops, include files and extensions.
+
+One key feature of twig is their /extensibility/. For example, base.html (which has unimelb page boilerplate) defines a /content/ block. Another template, start.html, begins with {% extends "base.html" %} That means it gets all the text of base.html, and overrides blocks which are specified locally, eg the 'content' block. Therefore templates can be 'DRY' without too much effort.
+
+1.4 Files and folders 
+======================
+The important files and folders in the directory
+
+1.4.1 css 
+~~~~~~~~~~
+Stylesheets are found here
+
+1.4.2 images 
+~~~~~~~~~~~~~
+Images used by the website are all in here
+
+1.4.3 includes 
+~~~~~~~~~~~~~~~
+This folder includes specific settings for each server. Nothing in here should ever be version-controlled in github.
++ dbconnect.inc.php: username and password for the local database
++ email_admin.inc.php: an email address to send administrator emails
++ libpath.inc.php: defines the path from the local web root
++ idecide.inc.php: login and new participant confirmation urls
+
+1.4.4 index.php 
+~~~~~~~~~~~~~~~~
+The start page. This simply loads and runs the Idecide application
+
+1.4.5 js 
+~~~~~~~~~
+javascript scripts
+
+1.4.6 lib 
+~~~~~~~~~~
+PHP code is stored here, especially in cgiapps/idecide.class.php, which is where most of the application happens. Also Javascript predefined libraries
+* pmgmCRUD 
+  My own collection of fairly well-tested PDO-based database helper functions, rolled into an object called PmgmDao. Create, Retrieve, Update, Delete all represented. This is used by [interfaceConfirmNewUser.php] and *ahem* duplicated in the main [idecide app].
+
+  [interfaceConfirmNewUser.php]: sec-1-2-2
+  [idecide app]: sec-1-2-1
+
+1.4.7 tpl 
+~~~~~~~~~~
+The HTML files for the various pages of the app are stored here. They use a system called Twig ([http://twig.sensiolabs.org/]). Values from the application are sent to the templates, appearing {{ between double curly brackets }}. Everything else appears on the screen as is, except for {% twig commands %} and {# comments #}
+
+1.4.8 twigcache 
+~~~~~~~~~~~~~~~~
+The twig templating system uses this directory to cache and speed up templates
+
+1.5 database structure 
+=======================
+
+1.5.1 entities 
+~~~~~~~~~~~~~~~
+The sql of these definitions is at setup/idecide.sql and setup/idecide_extra.sql
+using names from the API where possible, except _id instead of Id. 
+* idecide (and idecide_test) 
+  + participant 
+    local information as provided by participant
+    + participant_id
+    + first_name
+    + last_name
+    Yes or no attributes
+    + eligible
+    + consent
+    + validated
+    + confirmed: confirmed by the remote system via com/interfaceConfirmNewUser.php
+    + accrued: A participant is considered accrued when they have completed the baseline survey.
+    + off_study: An enrolled participant who has not completed baseline measures in the allocated time frame (within 6 weeks of enrolment).
+    + enrolled (date)
+    
+  + participant_contact 
+    + participant_id (foreign key references participant.participant_id)
+    + email
+    + alternate_email
+    + street_address1
+    + street_address2
+    + city
+    + state
+    + postcode
+    
+    
+  + participant_data 
+    information required by the idecide system
+    + participant_id (foreign key references participant.participant_id)
+    + username
+    + passcode (md5 hashed)
+    + treatment (text, one of Intervention or Control)
+    
+  + participant_incentive 
+    information about the incentive which comes back from the remote system. Not much point in storing the choices in a local db. basically an alternate address entity
+    + participant_id foreign key
+    + incentive_choice
+    + incentive_choice_name
+    + incentive_name: Name in which the incentive should be addressed to
+    + incentive_street: Street address to deliver the incentive
+    + incentive_city: City to deliver the incentive
+    + incentive_state: State to deliver the incentive
+    + incentive_post: Postal code to deliver the incentive
+    
+  + survey 
+    the four basic surveys
+    + survey_id
+    + surveyKeyword
+    + survey (user friendly label)
+    
+  + schedule 
+    (ie. participant_survey m-m)
+    + participant_id
+    + survey_id
+    + order_index (generally from baseline to last scheduled visit)
+    + surveyType text default 'Primary'
+    + dateScheduled (timestamp 2015-09-29 00:00:00)
+    + dateActual (timestamp 2015-09-29 00:00:00)
+    + dateStarted (timestamp), returned from remote system
+    + dateCompleted (timestamp), returned from remote system
+    
+* idecide_extra (and idecide_test_extra) 
+  + participant_password 
+    plain text password storage
+    + participant_id
+    + plain_text_pass
+    
+
+2 How do I...? 
+---------------
+
+2.1 change the contents of the user email 
+==========================================
+edit the file tpl/participant_email.txt for wording changes
+
+2.2 change the contents of the admin email 
+===========================================
+edit the file tpl/admin_new_participant.txt
