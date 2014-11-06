@@ -503,7 +503,7 @@ class Idecide extends Cgiapp2 {
     /* randomise data and record in database */
     $treatment = $this->getTreatment();
     $username = $this->generateUsername();
-    $plaintext = $this->generator->generateString(8, '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^+');
+    $plaintext = $this->generator->generateString(6, '2346789abcdefghijkmnpqrstuvwxyzABCDEFGHJKLMNPQRTUVWXYZ!@#$%^+');
     /* store plaintext password details */
     try {
       $this->conn2 = new PDO(DBCONNECT2, DBUSER, DBPASS);
@@ -662,7 +662,7 @@ class Idecide extends Cgiapp2 {
    * the database */
   private function generateUsername() {
     $name = "";
-    $name = $this->generator->generateString(6, '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ');
+    $name = $this->generator->generateString(4, '2346789abcdefghijkmnpqrstuvwxyzABCDEFGHJKLMNPQRTUVWXYZ');
     $table = 'participant_data';
     $conditions = array('passcode' => $name);
     $existing_users = $this->getListFromDB($table, $conditions);
