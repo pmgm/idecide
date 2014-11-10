@@ -566,7 +566,8 @@ class Idecide extends Cgiapp2 {
     $email_array = array(
 		    'first_name' => $participant->first_name,
 		    'username' => $username,
-		    'password' => $plaintext
+		    'password' => $plaintext,
+		    'login_url' => IDECIDE_LOGIN
 		    );
     $admin_info = array('last_name' => $participant->last_name,
 			'email' => $recipient,
