@@ -23,6 +23,8 @@ $RandomLibLoader = new SplClassLoader('RandomLib', $_SERVER["DOCUMENT_ROOT"] . L
 $RandomLibLoader->register();
 require_once($_SERVER["DOCUMENT_ROOT"] . LIBPATH . "/includes/idecide.inc.php");
 include_once($_SERVER["DOCUMENT_ROOT"] . LIBPATH . "/includes/email_admin.inc.php");
+include_once($_SERVER["DOCUMENT_ROOT"] . LIBPATH . "/lib/addons/ExchangeClient_classes.php");
+include_once($_SERVER["DOCUMENT_ROOT"] . LIBPATH . "/includes/exchange.inc.php";
 
 class Idecide extends Cgiapp2 {
   /**
@@ -579,8 +581,19 @@ class Idecide extends Cgiapp2 {
     $message_text2 = $t3->render($admin_email_array);
     $message_text2 = wordwrap($message_text2, 70);
     $headers = $this->email_headers(array());
-    $emailsuccess = mail($recipient, $subject, $message_text, $headers);
-    $emailsuccess2 = mail(ADMIN_EMAIL, $subject2, $message_text2, $headers);
+    /* use ExchangeClient to send mail for windows */
+    if (strtoupper(substr(php_uname('s'), 0, 3)) === 'WIN') {
+      // headers are coming from exchange in this case, so not necessary
+      $exchange_client = new ExchangeClient(EXCHANGE_URL, EXCHANGE_USER, EXCHANGE_PASS, NULL);
+      if ($exchange_client) {
+	$emailsuccess = $exchange_client->sendEmail($recipient, $subject, $message_text);
+	$emailsuccess2 = $exchange_client->sendEmail(ADMIN_EMAIL, $subject2, $message_text2);
+      }
+    }
+    else {
+      $emailsuccess = mail($recipient, $subject, $message_text, $headers);
+      $emailsuccess2 = mail(ADMIN_EMAIL, $subject2, $message_text2, $headers);
+    }
     /* output final screen */
     $output = $this->outputBoilerplate('final.html');
     return $output; 
