@@ -253,7 +253,6 @@ class Idecide extends Cgiapp2 {
    * goodbye => sayGoodbye()
    */
   function determineEligibility() {
-    print_r($_REQUEST);
     if (isset($_REQUEST['eligible_submitted'])) {
       /* eligible if:
        * a woman
@@ -543,7 +542,7 @@ class Idecide extends Cgiapp2 {
     //print_r($data);
     /* send data to remote idecide via curl */
     $query = http_build_query($data);
-    print_r($query);
+
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, IDECIDE_REGISTER);
     curl_setopt($ch, CURLOPT_POST, true);
