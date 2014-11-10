@@ -24,7 +24,7 @@ $RandomLibLoader->register();
 require_once($_SERVER["DOCUMENT_ROOT"] . LIBPATH . "/includes/idecide.inc.php");
 include_once($_SERVER["DOCUMENT_ROOT"] . LIBPATH . "/includes/email_admin.inc.php");
 include_once($_SERVER["DOCUMENT_ROOT"] . LIBPATH . "/lib/addons/ExchangeClient_classes.php");
-include_once($_SERVER["DOCUMENT_ROOT"] . LIBPATH . "/includes/exchange.inc.php";
+include_once($_SERVER["DOCUMENT_ROOT"] . LIBPATH . "/includes/exchange.inc.php");
 
 class Idecide extends Cgiapp2 {
   /**
