@@ -2,7 +2,7 @@
               ==========================================
 
 Author: Patrick Maslen
-Date: 2014-11-06 14:00:19 AEDT
+Date: 2014-11-10 14:53:37 AEDT
 
 
 Table of Contents
@@ -126,6 +126,7 @@ This folder includes specific settings for each server. Nothing in here should e
 + email_admin.inc.php: an email address to send administrator emails
 + libpath.inc.php: defines the path from the local web root
 + idecide.inc.php: login and new participant confirmation urls
++ exchange.inc.php: login information for windows Exchange server
 
 1.4.4 index.php 
 ~~~~~~~~~~~~~~~~
