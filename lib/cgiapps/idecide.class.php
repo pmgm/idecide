@@ -94,7 +94,7 @@ class Idecide extends Cgiapp2 {
     try {
       $this->conn = new PDO(DBCONNECT, DBUSER, DBPASS);
       $this->conn->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
-      $this->conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+      $this->conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_SILENT);
     }
     catch(PDOException $e) {
       $this->error = 'ERROR: ' . $e->getMessage();
@@ -123,7 +123,7 @@ class Idecide extends Cgiapp2 {
     /* for testing, 
      * make auto_reload true and cache false
      */
-    $testing = true;
+    $testing = false;
     if($testing) {
       $twig_options["auto_reload"] = true;
       $twig_options['cache'] = false;
